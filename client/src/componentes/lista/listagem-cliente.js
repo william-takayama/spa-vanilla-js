@@ -1,6 +1,5 @@
 import { deletaCliente, listarClientes } from "../../api/cliente";
 import "../../assets/css/clientes.css";
-import inicializaCadastro from "../cadastro/componente-cadastro";
 
 const removeCliente = (id) => {
   if (confirm("Deseja deletar o cliente ?")) {
@@ -10,53 +9,54 @@ const removeCliente = (id) => {
   }
 };
 
-const conteudo = `
-  <thead class="thead-dark">
-    <tr>
-      <th scope="col">CPF</th>
-      <th scope="col">Nome</th>
-      <th scope="col"></th>
-      <th scope="col">
-        <a class="btn btn-primary">Novo Cliente</a>
-      </th>
-    </tr>
-  </thead>
-`;
-const container = document.querySelector("[data-container]");
-const tabela = document.createElement("table");
+const criaCorpoTabele = (tabela) => {
+  const corpoTabela = document.createElement("tbody");
 
-tabela.innerHTML = conteudo;
-tabela.classList.add("table");
-container.appendChild(tabela);
+  const exibeCliente = (cpf, nome, id) => {
+    const linha = document.createElement("tr");
 
-const novoCliente = document.querySelector(".btn");
+    const conteudoLinha = `
+      <td>${cpf}</td>
+      <td>${nome}</td>
+      <button type="button" class="btn btn-danger" onclick="removeCliente(${id})">Excluir</button>
+      <a href="./componentes/edita/edita-clientes.html?id=${id}">
+        <button type=""button class="btn btn-info">Editar</button>
+      </a>
+    `;
 
-novoCliente.addEventListener("click", () => {
-  inicializaCadastro();
-});
+    linha.innerHTML = conteudoLinha;
+    return linha;
+  };
 
-const corpoTabela = document.createElement("tbody");
+  listarClientes().then((exibe) => {
+    exibe.forEach((indice) => {
+      corpoTabela.appendChild(exibeCliente(indice.cpf, indice.nome, indice.id));
+    });
+  });
 
-const exibeCliente = (cpf, nome, id) => {
-  const linha = document.createElement("tr");
-
-  const conteudoLinha = `
-    <td>${cpf}</td>
-    <td>${nome}</td>
-    <button type="button" class="btn btn-danger" onclick="removeCliente(${id})">Excluir</button>
-    <a href="./componentes/edita/edita-clientes.html?id=${id}">
-      <button type=""button class="btn btn-info">Editar</button>
-    </a>
-`;
-
-  linha.innerHTML = conteudoLinha;
-  return linha;
+  tabela.appendChild(corpoTabela);
 };
 
-listarClientes().then((exibe) => {
-  exibe.forEach((indice) => {
-    corpoTabela.appendChild(exibeCliente(indice.cpf, indice.nome, indice.id));
-  });
-});
+const inicializaTabela = () => {
+  const cabecalho = `
+    <thead class="thead-dark">
+      <tr>
+        <th scope="col">CPF</th>
+        <th scope="col">Nome</th>
+        <th scope="col"></th>
+        <th scope="col">
+          <a class="btn btn-primary" onclick="navigate('/cadastro'); return false;">Novo Cliente</a>
+        </th>
+      </tr>
+    </thead>
+    `;
+  const tabela = document.createElement("table");
+  tabela.innerHTML = cabecalho;
+  tabela.classList.add("table");
 
-tabela.appendChild(corpoTabela);
+  criaCorpoTabele(tabela);
+
+  return tabela;
+};
+
+export default inicializaTabela;
