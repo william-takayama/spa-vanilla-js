@@ -1,9 +1,11 @@
 import inicializaCadastro from "./componentes/cadastro/componente-cadastro";
 import inicializaTabela from "./componentes/lista/listagem-cliente";
+import inicializaFormEdicao from "./componentes/edita/form-edicao";
 
 const routes = {
   "/": inicializaTabela,
   "/cadastro": inicializaCadastro,
+  "/edita": inicializaFormEdicao,
 };
 
 const rootDiv = document.querySelector("[data-container]");

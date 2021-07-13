@@ -1,15 +1,24 @@
 import { deletaCliente, listarClientes } from "../../api/cliente";
 import "../../assets/css/clientes.css";
 
-const removeCliente = (id) => {
+const removeCliente = async (id) => {
   if (confirm("Deseja deletar o cliente ?")) {
-    debugger;
-    deletaCliente(id);
+    await deletaCliente(id);
     window.location.reload();
   }
 };
 
-const criaCorpoTabele = (tabela) => {
+const criarBotaoExcluir = (id) => {
+  const botao = document.createElement("button");
+  botao.classList.add("btn", "btn-danger");
+  botao.innerHTML = "Excluir";
+
+  botao.addEventListener("click", () => {
+    removeCliente(id);
+  });
+  return botao;
+};
+const criaCorpoTabela = (tabela) => {
   const corpoTabela = document.createElement("tbody");
 
   const exibeCliente = (cpf, nome, id) => {
@@ -18,13 +27,12 @@ const criaCorpoTabele = (tabela) => {
     const conteudoLinha = `
       <td>${cpf}</td>
       <td>${nome}</td>
-      <button type="button" class="btn btn-danger" onclick="removeCliente(${id})">Excluir</button>
-      <a href="./componentes/edita/edita-clientes.html?id=${id}">
-        <button type=""button class="btn btn-info">Editar</button>
-      </a>
+      
+      <button type=""button class="btn btn-info" onclick="navigate('/edita?id=${id}'); return false;">Editar</button>
     `;
 
     linha.innerHTML = conteudoLinha;
+    linha.appendChild(criarBotaoExcluir(id));
     return linha;
   };
 
@@ -54,7 +62,7 @@ const inicializaTabela = () => {
   tabela.innerHTML = cabecalho;
   tabela.classList.add("table");
 
-  criaCorpoTabele(tabela);
+  criaCorpoTabela(tabela);
 
   return tabela;
 };
